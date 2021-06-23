@@ -5,7 +5,7 @@
       picom = { url = "github:yshui/picom"; flake = false; };
       xmonad = { url = "path:/home/auscyber/xmonad"; flake = false; };
       xmonad-contrib = { url = "path:/home/auscyber/xmonad-contrib"; flake = false; };
-      agda-stdlib = { url = "github:agda/agda-stdlib/master"; flake = false; };
+      agda-stdlib = { url = "github:agda/agda-stdlib/"; flake = false; };
 
     
 
@@ -63,7 +63,8 @@
     };
   };
 
-    }) ] ++ (importNixFiles ./overlays);
+    }) ] ;
+#    ++ (importNixFiles ./overlays);
 
   in
 

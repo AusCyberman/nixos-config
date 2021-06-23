@@ -12,7 +12,6 @@
       },
       "original": {
         "owner": "agda",
-        "ref": "master",
         "repo": "agda-stdlib",
         "type": "github"
       }
