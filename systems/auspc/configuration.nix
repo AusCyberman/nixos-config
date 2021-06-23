@@ -174,6 +174,7 @@
   #   ];
   #  };
 
+  virtualisation.docker.enable = true;
   virtualisation.libvirtd.enable = true;
   environment.pathsToLink = [ "/share/agda" ];
 
