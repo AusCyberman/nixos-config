@@ -60,7 +60,7 @@ in rec {
       feh
       maim
       teams
-      clang
+      gcc
       dunst
       procps-ng
       nodejs-14_x
@@ -69,6 +69,7 @@ in rec {
       (spotify.overrideAttrs (attrs: { nativeInputs = [ gnutls ]; }))
       unzip
       scala
+      rnix-lsp
       #  starship ardour slack
       #  luaPackages.lua-lsp 
       idris2

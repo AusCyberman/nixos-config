@@ -20,6 +20,7 @@
     };
 
     #flakes
+    rnix.url = "github:nix-community/rnix-lsp";
     neovim.url = "github:neovim/neovim?dir=contrib";
     flake-utils.url = "github:numtide/flake-utils";
     home-manager.url = "github:nix-community/home-manager";
@@ -32,7 +33,7 @@
     nixpkgs.follows = "master";
 
   };
-  outputs = inputs@{ self, nixpkgs, home-manager, neovim, picom, ... }:
+  outputs = inputs@{ self, nixpkgs, home-manager, neovim, picom, rnix, ... }:
     with nixpkgs.lib;
     let
       config = {
@@ -48,7 +49,7 @@
         (final: prev:
           let system = final.stdenv.hostPlatform.system;
           in {
-
+            rnix-lsp = rnix.packages."${system}".rnix-lsp;
             picom = (prev.picom.overrideAttrs (attrs: { src = picom; }));
 
             neovim-nightly = neovim.packages.${system}.neovim;
