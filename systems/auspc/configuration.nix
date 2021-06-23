@@ -11,11 +11,6 @@
     '';
   };
 
-  # nix = { 
-  # package = pkgs.nixFlakes;
-  #    extraOptions = ''
-  #        experimental-features = nix-command flakes
-  #      ''; };
   # Use the systemd-boot EFI boot loader.
   # boot.loader.systemd-boot.enable = true;
   # boot.loader.efi.canTouchEfiVariables = true;
@@ -92,7 +87,7 @@
       "plugdev"
       "wheel"
       "video"
-    ]; # Enable ‘sudo’ for the user.
+    ]; 
     shell = pkgs.zsh;
   };
   programs.sway = {
@@ -120,9 +115,11 @@
     OVMF
     virtmanager
     dconf
+    
+    #Required for vscode
     nodejs-14_x
   ];
-
+  programs.steam.enable = true;
   programs.dconf.enable = true;
 
   services.xserver = {
