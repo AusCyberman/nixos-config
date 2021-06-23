@@ -2,30 +2,29 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, lib, pkgs, ... }:
-{
+{ config, lib, pkgs, ... }: {
 
   nix = {
-        package = pkgs.nixUnstable;
-        extraOptions = ''
-          experimental-features = nix-command flakes
-        '';
-        };
+    package = pkgs.nixUnstable;
+    extraOptions = ''
+      experimental-features = nix-command flakes
+    '';
+  };
 
-# nix = { 
-# package = pkgs.nixFlakes;
-#    extraOptions = ''
-#        experimental-features = nix-command flakes
-#      ''; };
+  # nix = { 
+  # package = pkgs.nixFlakes;
+  #    extraOptions = ''
+  #        experimental-features = nix-command flakes
+  #      ''; };
   # Use the systemd-boot EFI boot loader.
-# boot.loader.systemd-boot.enable = true;
-# boot.loader.efi.canTouchEfiVariables = true;
-# boot.loader.efi.efiSysMountPoint = "/boot/efi";
-# boot.loader.grub.useOSProber = true;
+  # boot.loader.systemd-boot.enable = true;
+  # boot.loader.efi.canTouchEfiVariables = true;
+  # boot.loader.efi.efiSysMountPoint = "/boot/efi";
+  # boot.loader.grub.useOSProber = true;
   networking.hostName = "auspc"; # Define your hostname.
-#  networking.wireless = { enable = true;  # Enables wireless support via wpa_supplicant.
-#       networks.NeddySB.pskRaw = "e9331ef6ad7d0a1d67e81afaba284e4544cedb73b33f840c9812fc1991562dcc";
-#  };
+  #  networking.wireless = { enable = true;  # Enables wireless support via wpa_supplicant.
+  #       networks.NeddySB.pskRaw = "e9331ef6ad7d0a1d67e81afaba284e4544cedb73b33f840c9812fc1991562dcc";
+  #  };
   # Set your time zone.
   time.timeZone = "Australia/Melbourne";
 
@@ -35,7 +34,7 @@
   hardware.openrazer.enable = true;
   networking.useDHCP = false;
   networking.interfaces.enp4s0.useDHCP = true;
-#  networking.interfaces.wlo1.useDHCP = true;
+  #  networking.interfaces.wlo1.useDHCP = true;
   networking.wireless.userControlled.enable = true;
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
@@ -48,13 +47,15 @@
   #   keyMap = "us";
   # };
 
-
   # Configure keymap in X11
   # services.xserver.xkbOptions = "eurosign:e";
   services.espanso.enable = true;
- fonts.fonts = with pkgs; [
-	(nerdfonts.override { fonts = ["FiraCode" "Inconsolata" "Hasklig" "RobotoMono"]; } )
-  ];
+  fonts.fonts = with pkgs;
+    [
+      (nerdfonts.override {
+        fonts = [ "FiraCode" "Inconsolata" "Hasklig" "RobotoMono" ];
+      })
+    ];
 
   # Enable CUPS to print documents.
   # services.printing.enable = true;
@@ -68,14 +69,14 @@
     # Only the full build has Bluetooth support, so it must be selected here.
     package = pkgs.pulseaudioFull;
   };
-#  services.jack = {
-#	jackd.enable = true;
-#
-#	alsa.enable = false;
-#	loopback = {
-#		enable = true;
-#	};
-#  };
+  #  services.jack = {
+  #	jackd.enable = true;
+  #
+  #	alsa.enable = false;
+  #	loopback = {
+  #		enable = true;
+  #	};
+  #  };
   hardware.bluetooth.enable = true;
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
@@ -84,7 +85,14 @@
   users.mutableUsers = true;
   users.users.auscyber = {
     isNormalUser = true;
-    extraGroups = ["jackaudio" "audio" "libvirtd" "plugdev" "wheel" "video" ]; # Enable ‘sudo’ for the user.
+    extraGroups = [
+      "jackaudio"
+      "audio"
+      "libvirtd"
+      "plugdev"
+      "wheel"
+      "video"
+    ]; # Enable ‘sudo’ for the user.
     shell = pkgs.zsh;
   };
   programs.sway = {
@@ -92,75 +100,79 @@
 
   };
   security.sudo = {
-	enable = true;
-#	extraRules = {
-	  
-#	};
+    enable = true;
+    #	extraRules = {
+
+    #	};
   };
   programs.zsh.enable = true;
   hardware.opengl.enable = true;
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-     wget vim 
-    chromium  python3  
+    wget
+    vim
+    chromium
+    python3
     #Virtualisation
     breeze-grub
-    qemu OVMF virtmanager dconf
-   nodejs-14_x   
+    qemu
+    OVMF
+    virtmanager
+    dconf
+    nodejs-14_x
   ];
 
   programs.dconf.enable = true;
-  
 
- services.xserver  = {
-   layout = "us";
-       enable = true;
-   config = ''
+  services.xserver = {
+    layout = "us";
+    enable = true;
+    config = ''
 
-Section "InputClass"
-            Identifier "My Mouse"
-            MatchIsPointer "yes"
-            Option "AccelerationProfile" "-1"
-            Option "AccelerationScheme" "none"
-            Option "AccelSpeed" "-1"
-EndSection
-   '';
-   videoDrivers = [ "nvidia" ];
-#   videoDrivers = [ "nouveau" ];
-   displayManager.lightdm = {
-   	enable = true;
-   	greeter.enable = true;
-    background = "/usr/share/pixmaps/background1.jpg";
-   };
+      Section "InputClass"
+                  Identifier "My Mouse"
+                  MatchIsPointer "yes"
+                  Option "AccelerationProfile" "-1"
+                  Option "AccelerationScheme" "none"
+                  Option "AccelSpeed" "-1"
+      EndSection
+         '';
+    videoDrivers = [ "nvidia" ];
+    #   videoDrivers = [ "nouveau" ];
+    displayManager.lightdm = {
+      enable = true;
+      greeter.enable = true;
+      background = "/usr/share/pixmaps/background1.jpg";
+    };
     desktopManager.plasma5.enable = true;
-#   displayManager.startx.enable = true;
-   displayManager.defaultSession = "none+xmonad";
-#   displayManager.autoLogin = {
-#   	enable = true;
-#   	user = "auscyber";
-#   };
-   windowManager.awesome = {
-     enable = true;
-     luaModules = with pkgs.luaPackages; [
-       luarocks ];
-   };
-   windowManager.xmonad = {
-   	enable = true;
-   	   extraPackages = haskellPackages: with haskellPackages ;[
-	   	xmonad-contrib
-		xmonad
-		];
-	   
-   	};
- };
+    #   displayManager.startx.enable = true;
+    displayManager.defaultSession = "none+xmonad";
+    #   displayManager.autoLogin = {
+    #   	enable = true;
+    #   	user = "auscyber";
+    #   };
+    windowManager.awesome = {
+      enable = true;
+      luaModules = with pkgs.luaPackages; [ luarocks ];
+    };
+    windowManager.xmonad = {
+      enable = true;
+      extraPackages = haskellPackages:
+        with haskellPackages; [
+          xmonad-contrib
+          xmonad
+        ];
+
+    };
+  };
   hardware.opengl.driSupport32Bit = true;
-#  services.cron = {
-#    enable = true;
-#    systemCronJobs = [
-#    "0 0 1-31/2 * *  auscyber . /etc/profile' ${pkgs.bash}/bin/bash /home/auscyber/dotfiles/backup2.sh"
-#   ];
-#  };
+  #  services.cron = {
+  #    enable = true;
+  #    systemCronJobs = [
+  #    "0 0 1-31/2 * *  auscyber . /etc/profile' ${pkgs.bash}/bin/bash /home/auscyber/dotfiles/backup2.sh"
+  #   ];
+  #  };
 
   virtualisation.libvirtd.enable = true;
   environment.pathsToLink = [ "/share/agda" ];
@@ -191,12 +203,10 @@ EndSection
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "21.05"; # Did you read the comment?
-  environment.etc."current-system-packages".text =
-  let
-	packages = builtins.map (p: "${p.name}") config.environment.systemPackages;
-	sortedUnique = builtins.sort builtins.lessThan (lib.unique packages);
-	formatted = builtins.concatStringsSep "\n" sortedUnique;
-	in
-	formatted;
+  environment.etc."current-system-packages".text = let
+    packages = builtins.map (p: "${p.name}") config.environment.systemPackages;
+    sortedUnique = builtins.sort builtins.lessThan (lib.unique packages);
+    formatted = builtins.concatStringsSep "\n" sortedUnique;
+  in formatted;
 }
 

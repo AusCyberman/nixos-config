@@ -4,36 +4,35 @@
 { config, lib, pkgs, modulesPath, ... }:
 
 {
-  imports =
-    [ (modulesPath + "/installer/scan/not-detected.nix")
-    ];
-  boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "nvme" "usbhid" "usb_storage" "sd_mod" ];
+  imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
+  boot.initrd.availableKernelModules =
+    [ "xhci_pci" "ahci" "nvme" "usbhid" "usb_storage" "sd_mod" ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
   boot.kernelParams = [ "nomodeset" ];
   fileSystems = {
-  "/" =
-    { device = "/dev/nvme0n1p6";
+    "/" = {
+      device = "/dev/nvme0n1p6";
       fsType = "ext4";
     };
 
-  "/home" =
-    { device = "/dev/nvme0n1p5";
+    "/home" = {
+      device = "/dev/nvme0n1p5";
       fsType = "ext2";
     };
 
-  "/boot/efi" =
-    { device = "/dev/nvme0n1p1";
+    "/boot/efi" = {
+      device = "/dev/nvme0n1p1";
       fsType = "vfat";
     };
-  "/mnt/hdd" = 
-    { device = "/dev/sda2";
+    "/mnt/hdd" = {
+      device = "/dev/sda2";
       fsType = "ntfs";
-      options = [ "defaults" "uid=1000" "auto" "rw"];
+      options = [ "defaults" "uid=1000" "auto" "rw" ];
     };
-      
-   };
+
+  };
 
   swapDevices = [ ];
 
