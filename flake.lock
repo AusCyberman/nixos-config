@@ -3,13 +3,18 @@
     "agda-stdlib": {
       "flake": false,
       "locked": {
-        "narHash": "sha256-rTyDkUy7ABUdZLMJIkIiWscPLrF94oNz9l2sZZCsNos=",
-        "path": "/home/auscyber/agda-stdlib-1.5",
-        "type": "path"
+        "lastModified": 1624249813,
+        "narHash": "sha256-eNrJQ5cqmdHSW3xI5xKuYW1C9e9ElejqqmXPeVOjPO8=",
+        "owner": "agda",
+        "repo": "agda-stdlib",
+        "rev": "231d2104238b10c78a76d5df09fc77635fb7c3a4",
+        "type": "github"
       },
       "original": {
-        "path": "/home/auscyber/agda-stdlib-1.5",
-        "type": "path"
+        "owner": "agda",
+        "ref": "master",
+        "repo": "agda-stdlib",
+        "type": "github"
       }
     },
     "flake-utils": {

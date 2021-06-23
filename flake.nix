@@ -5,7 +5,7 @@
       picom = { url = "github:yshui/picom"; flake = false; };
       xmonad = { url = "path:/home/auscyber/xmonad"; flake = false; };
       xmonad-contrib = { url = "path:/home/auscyber/xmonad-contrib"; flake = false; };
-      agda-stdlib = { url = "path:/home/auscyber/agda-stdlib-1.5"; flake = false; };
+      agda-stdlib = { url = "github:agda/agda-stdlib/master"; flake = false; };
 
     
 
