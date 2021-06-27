@@ -86,6 +86,7 @@
       "libvirtd"
       "plugdev"
       "wheel"
+      "docker"
       "video"
     ]; 
     shell = pkgs.zsh;
@@ -142,7 +143,7 @@
       greeter.enable = true;
       background = "/usr/share/pixmaps/background1.jpg";
     };
-    desktopManager.plasma5.enable = true;
+#    desktopManager.plasma5.enable = true;
     #   displayManager.startx.enable = true;
     displayManager.defaultSession = "none+xmonad";
     #   displayManager.autoLogin = {
@@ -186,7 +187,10 @@
   # List services that you want to enable:
 
   # Enable the OpenSSH daemon.
-  services.openssh.enable = true;
+  services.openssh = {
+    enable = true;
+    forwardX11 = true;
+  };
   #services.espanso.enable = true;
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];

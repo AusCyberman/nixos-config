@@ -73,12 +73,17 @@ in rec {
       #  starship ardour slack
       #  luaPackages.lua-lsp 
       idris2
+      tree-sitter
+      stdenv.cc.cc.lib
+      grub2_efi
       (python3.withPackages (p: with p; [ pynvim ]))
-    ] ++ (with pkgs.haskellPackages; [
+      lxsession
+    ] ++ (with pkgs.lua51Packages; [luarocks]) ++ (with pkgs.haskellPackages; [
       stylish-haskell
       agda-stdlib
       Agda
       taffybar
+      my-xmonad
       haskell-language-server
     ]) ++ ([
       (pkgs.haskellPackages.ghcWithPackages (pk:

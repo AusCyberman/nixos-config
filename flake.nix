@@ -7,11 +7,15 @@
       flake = false;
     };
     xmonad = {
-      url = "path:/home/auscyber/xmonad";
+      url = "github:auscyberman/xmonad";
       flake = false;
     };
     xmonad-contrib = {
-      url = "path:/home/auscyber/xmonad-contrib";
+      url = "github:auscyberman/xmonad-contrib";
+      flake = false;
+    };
+    my-xmonad = {
+      url = "github:auscyberman/dotfiles?dir=xmonad";
       flake = false;
     };
     agda-stdlib = {
@@ -20,6 +24,9 @@
     };
 
     #flakes
+    rust-overlay.url = "github:oxalica/rust-overlay";
+    idris2-pkgs.url = "github:claymager/idris2-pkgs";
+    idris2.url = "github:idris-lang/Idris2";
     rnix.url = "github:nix-community/rnix-lsp";
     neovim.url = "github:neovim/neovim?dir=contrib";
     flake-utils.url = "github:numtide/flake-utils";
@@ -33,7 +40,7 @@
     nixpkgs.follows = "master";
 
   };
-  outputs = inputs@{ self, nixpkgs, home-manager, neovim, picom, rnix, ... }:
+  outputs = inputs@{ self, nixpkgs, home-manager, neovim, picom, rnix, idris2, idris2-pkgs, rust-overlay, my-xmonad, ... }:
     with nixpkgs.lib;
     let
       config = {
@@ -46,21 +53,23 @@
         (lists.forEach (mapAttrsToList (name: _: path + ("/" + name))
           (filterAttrs filterNixFiles (builtins.readDir path)))) import;
       overlays = [
+        rust-overlay.overlay
         (final: prev:
           let system = final.stdenv.hostPlatform.system;
           in {
             rnix-lsp = rnix.packages."${system}".rnix-lsp;
             picom = (prev.picom.overrideAttrs (attrs: { src = picom; }));
+            idris2 = idris2.packages."${system}".idris2;
+            neovim-nightly = neovim.packages."${system}".neovim;
 
-            neovim-nightly = neovim.packages.${system}.neovim;
             haskellPackages = prev.haskellPackages.override {
               overrides = self: super: rec {
 
                 #          X11 = self.X11_1_10;
                 xmonad = self.callCabal2nix "xmonad" inputs.xmonad { };
                 xmonad-contrib =
-                  self.callCabal2nix "xmonad-contrib" inputs.xmonad-contrib { };
-                #my-xmonad = self.callPackage "/home/auscyber/dotfiles/xmonad/my-xmonad.nix" {} ;
+                  self.callCabal2nix "xmonad-contrib" inputs.xmonad-contrib  { };
+                my-xmonad = self.callCabal2nix  "my-xmonad" (inputs.my-xmonad + "/xmonad") {} ;
 
                 agda-stdlib =
                   self.callCabal2nix "agda-stdlib-utils" inputs.agda-stdlib { };
@@ -69,6 +78,7 @@
 
           })
       ];
+
       #    ++ (importNixFiles ./overlays);
 
     in {
