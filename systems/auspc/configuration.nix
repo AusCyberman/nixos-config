@@ -52,6 +52,10 @@
       })
     ];
 
+    services.accounts-daemon = {
+      enable = true;
+    };
+
   # Enable CUPS to print documents.
   # services.printing.enable = true;
   services.blueman.enable = true;
@@ -106,6 +110,8 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
+    gparted
+    lxsession
     wget
     vim
     chromium

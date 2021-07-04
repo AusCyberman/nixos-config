@@ -16,6 +16,16 @@ in rec {
     home-manager.enable = true;
   };
   services.dunst = { enable = false; };
+
+  programs.gpg.enable = true;
+  services.gpg-agent = { 
+    enable = true;
+  pinentryFlavor = "qt";
+    enableSshSupport = true;
+extraConfig = ''
+    allow-loopback-pinentry
+    '';
+  };
   #  services.vscode-server.enable = true;
 
   home.packages = with pkgs;
@@ -73,11 +83,10 @@ in rec {
       #  starship ardour slack
       #  luaPackages.lua-lsp 
       idris2
-      tree-sitter
       stdenv.cc.cc.lib
       grub2_efi
       (python3.withPackages (p: with p; [ pynvim ]))
-      lxsession
+      _1password
     ] ++ (with pkgs.lua51Packages; [luarocks]) ++ (with pkgs.haskellPackages; [
       stylish-haskell
       agda-stdlib
@@ -85,6 +94,7 @@ in rec {
       taffybar
       my-xmonad
       haskell-language-server
+      pinentry
     ]) ++ ([
       (pkgs.haskellPackages.ghcWithPackages (pk:
         with pk; [
