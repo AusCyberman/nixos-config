@@ -11,8 +11,8 @@
       flake = false;
     };
     xmonad-contrib = {
-            url = "github:auscyberman/xmonad-contrib";
-#      url = "/home/auscyber/xmonad-contrib";
+#            url = "github:auscyberman/xmonad-contrib";
+      url = "/home/auscyber/xmonad-contrib";
       flake = false;
     };
     dotfiles = {
@@ -98,7 +98,8 @@
       apps.${system}.nvim = neovim.apps.${system}.nvim;
     })) //
     {
-      nixosConfigurations.auspc = import ./systems/auspc {
+      nixosConfigurations = {
+	auspc = import ./systems/auspc {
         inherit nixpkgs config home-manager overlays inputs;
       };
 	secondpc = import ./systems/secondpc {
@@ -106,8 +107,8 @@
 	};
 
     };
+	};
 
-};
 }
 
 
