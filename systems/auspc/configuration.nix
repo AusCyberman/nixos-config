@@ -27,6 +27,7 @@
   # Per-interface useDHCP will be mandatory in the future, so this generated config
   # replicates the default behaviour.
   hardware.openrazer.enable = true;
+  hardware.nvidia.package = config.boot.kernelPackages.nvidiaPackages.beta;
   networking.useDHCP = false;
   networking.interfaces.enp4s0.useDHCP = true;
   #  networking.interfaces.wlo1.useDHCP = true;
@@ -44,7 +45,6 @@
 
   # Configure keymap in X11
   # services.xserver.xkbOptions = "eurosign:e";
-  services.espanso.enable = true;
   fonts.fonts = with pkgs;
     [
       (nerdfonts.override {
@@ -52,13 +52,9 @@
       })
     ];
 
-    services.accounts-daemon = {
-      enable = true;
-    };
 
   # Enable CUPS to print documents.
   # services.printing.enable = true;
-  services.blueman.enable = true;
   # Enable sound.
   sound.enable = true;
   hardware.pulseaudio = {
@@ -92,7 +88,7 @@
       "wheel"
       "docker"
       "video"
-    ]; 
+    ];
     shell = pkgs.zsh;
   };
   programs.sway = {
@@ -105,8 +101,20 @@
 
     #	};
   };
+  security.wrappers = {
+    "1Password-KeyringHelper" = {
+      source = "${pkgs._1password-gui.out}/share/1password/1Password-KeyringHelper";
+      setuid = true;
+      owner = "root";
+      group = "nobody";
+    };
+  };
   programs.zsh.enable = true;
-  hardware.opengl.enable = true;
+  hardware.opengl = {
+    enable = true;
+    extraPackages = with pkgs; [ mesa ];
+    driSupport32Bit = true;
+  };
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
@@ -114,25 +122,38 @@
     lxsession
     wget
     vim
-    chromium
     python3
     #Virtualisation
     breeze-grub
     qemu
     OVMF
     virtmanager
+    _1password-gui
+
     dconf
-    
+
     #Required for vscode
     nodejs-14_x
   ];
   programs.steam.enable = true;
   programs.dconf.enable = true;
 
-  services.xserver = {
-    layout = "us";
-    enable = true;
-    config = ''
+  services = {
+    accounts-daemon = {
+      enable = true;
+    };
+
+    blueman.enable = true;
+
+    openssh = {
+      enable = true;
+      forwardX11 = true;
+    };
+    espanso.enable = true;
+    xserver = {
+      layout = "us";
+      enable = true;
+      config = ''
 
       Section "InputClass"
                   Identifier "My Mouse"
@@ -142,35 +163,35 @@
                   Option "AccelSpeed" "-1"
       EndSection
          '';
-    videoDrivers = [ "nvidia" ];
-    #   videoDrivers = [ "nouveau" ];
-    displayManager.lightdm = {
-      enable = true;
-      greeter.enable = true;
-      background = "/usr/share/pixmaps/background1.jpg";
-    };
-#    desktopManager.plasma5.enable = true;
-    #   displayManager.startx.enable = true;
-    displayManager.defaultSession = "none+xmonad";
-    #   displayManager.autoLogin = {
-    #   	enable = true;
-    #   	user = "auscyber";
-    #   };
-    windowManager.awesome = {
-      enable = true;
-      luaModules = with pkgs.luaPackages; [ luarocks ];
-    };
-    windowManager.xmonad = {
-      enable = true;
-      extraPackages = haskellPackages:
-        with haskellPackages; [
-          xmonad-contrib
-          xmonad
-        ];
+      videoDrivers = [ "nvidia" ];
+      #   videoDrivers = [ "nouveau" ];
+      displayManager.lightdm = {
+        enable = true;
+        greeter.enable = true;
+        background = "/usr/share/pixmaps/background1.jpg";
+      };
+       desktopManager.plasma5.enable = true;
+      #   displayManager.startx.enable = true;
+      displayManager.defaultSession = "none+xmonad";
+      #   displayManager.autoLogin = {
+      #   	enable = true;
+      #   	user = "auscyber";
+      #   };
+      windowManager.awesome = {
+        enable = true;
+        luaModules = with pkgs.luaPackages; [ luarocks ];
+      };
+      windowManager.xmonad = {
+        enable = true;
+        extraPackages = haskellPackages:
+          with haskellPackages; [
+            xmonad-contrib
+            xmonad
+          ];
 
+      };
     };
   };
-  hardware.opengl.driSupport32Bit = true;
   #  services.cron = {
   #    enable = true;
   #    systemCronJobs = [
@@ -193,10 +214,7 @@
   # List services that you want to enable:
 
   # Enable the OpenSSH daemon.
-  services.openssh = {
-    enable = true;
-    forwardX11 = true;
-  };
+
   #services.espanso.enable = true;
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
@@ -210,11 +228,17 @@
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
+
   system.stateVersion = "21.05"; # Did you read the comment?
-  environment.etc."current-system-packages".text = let
-    packages = builtins.map (p: "${p.name}") config.environment.systemPackages;
-    sortedUnique = builtins.sort builtins.lessThan (lib.unique packages);
-    formatted = builtins.concatStringsSep "\n" sortedUnique;
-  in formatted;
+  environment.etc."current-system-packages".text =
+    let
+      getPackagesNames = builtins.map (p: "${p.name}");
+      sysPackages = config.environment.systemPackages;
+      homePackages = config.home-manager.users.auscyber.home.packages;
+      packages = getPackagesNames (homePackages ++ sysPackages);
+      sortedUnique = builtins.sort builtins.lessThan (lib.unique packages);
+      formatted = builtins.concatStringsSep "\n" sortedUnique;
+    in
+    formatted;
 }
 
