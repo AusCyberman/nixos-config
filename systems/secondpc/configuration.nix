@@ -16,7 +16,7 @@
   # boot.loader.efi.canTouchEfiVariables = true;
   # boot.loader.efi.efiSysMountPoint = "/boot/efi";
   # boot.loader.grub.useOSProber = true;
-  networking.hostName = "auspc"; # Define your hostname.
+  networking.hostName = "secondpc"; # Define your hostname.
   #  networking.wireless = { enable = true;  # Enables wireless support via wpa_supplicant.
   #       networks.NeddySB.pskRaw = "e9331ef6ad7d0a1d67e81afaba284e4544cedb73b33f840c9812fc1991562dcc";
   #  };
@@ -29,7 +29,7 @@
   hardware.openrazer.enable = true;
   networking.useDHCP = false;
   #
-  networking.interfaces.enp4s0.useDHCP = true;
+  networking.interfaces.enp2s0.useDHCP = true;
   #  networking.interfaces.wlo1.useDHCP = true;
   networking.wireless.userControlled.enable = true;
   # Configure network proxy if necessary
@@ -143,7 +143,7 @@
                   Option "AccelSpeed" "-1"
       EndSection
          '';
-    videoDrivers = [ "nvidia" ];
+    videoDrivers = [ "intel" ];
     #   videoDrivers = [ "nouveau" ];
     displayManager.lightdm = {
       enable = true;
