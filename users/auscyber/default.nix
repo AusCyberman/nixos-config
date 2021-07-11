@@ -1,9 +1,14 @@
 conf@{ config, pkgs, system, lib, ... }:
 let impConf = fil: import fil conf;
 
-in rec {
+in
+rec {
   imports = [ ./picom.nix ];
   programs = {
+    kakoune = {
+      enable = true;
+      plugins = with pkgs.kakounePlugins; [ kak-lsp parinfer-rust powerline-kak ];
+    };
     vim = {
       enable = true;
       plugins = with pkgs.vimPlugins; [ vim-airline vim-addon-nix ];
@@ -15,21 +20,28 @@ in rec {
     command-not-found.enable = true;
     home-manager.enable = true;
   };
-  services.dunst = { enable = false; };
+  xdg.configFile."nvim/parser/c.so".source = "${pkgs.tree-sitter.builtGrammars.tree-sitter-c}/parser";
+  xdg.configFile."nvim/parser/lua.so".source = "${pkgs.tree-sitter.builtGrammars.tree-sitter-lua}/parser";
+  xdg.configFile."nvim/parser/rust.so".source = "${pkgs.tree-sitter.builtGrammars.tree-sitter-rust}/parser";
+  xdg.configFile."nvim/parser/python.so".source = "${pkgs.tree-sitter.builtGrammars.tree-sitter-python}/parser";
 
-  programs.gpg.enable = true;
-  services.gpg-agent = { 
-    enable = true;
-  pinentryFlavor = "qt";
-    enableSshSupport = true;
-extraConfig = ''
-    allow-loopback-pinentry
-    '';
+
+  services = {
+    dunst.enable = false;
+    gpg-agent = {
+      enable = true;
+      pinentryFlavor = "qt";
+      enableSshSupport = true;
+      extraConfig = ''
+        allow-loopback-pinentry
+      '';
+    };
   };
-  #  services.vscode-server.enable = true;
+  programs.gpg.enable = true;
 
   home.packages = with pkgs;
     [
+      direnv
       #  st
       #  ((pkgs.gradleGen.override {
       #    java = jdk8;
@@ -52,7 +64,6 @@ extraConfig = ''
       rofi
       arandr
       ccls
-      libreoffice
       steam
       jetbrains.idea-ultimate
       libnotify
@@ -80,14 +91,19 @@ extraConfig = ''
       unzip
       scala
       rnix-lsp
-      #  starship ardour slack
-      #  luaPackages.lua-lsp 
+      #  starship ardour
+      slack
+      #  luaPackages.lua-lsp
       idris2
       stdenv.cc.cc.lib
       grub2_efi
       (python3.withPackages (p: with p; [ pynvim ]))
+      metals
       _1password
-    ] ++ (with pkgs.lua51Packages; [luarocks]) ++ (with pkgs.haskellPackages; [
+      gnome.gnome-keyring
+      gnome.nautilus
+      eww
+    ] ++ (with pkgs.lua51Packages; [ luarocks ]) ++ (with pkgs.haskellPackages; [
       stylish-haskell
       agda-stdlib
       Agda
@@ -95,6 +111,7 @@ extraConfig = ''
       my-xmonad
       haskell-language-server
       pinentry
+      thunderbird
     ]) ++ ([
       (pkgs.haskellPackages.ghcWithPackages (pk:
         with pk; [
@@ -116,5 +133,5 @@ extraConfig = ''
   home.username = "auscyber";
   home.homeDirectory = "/home/auscyber";
   home.sessionVariables.EDITOR = "nvim";
-  home.stateVersion = "21.05";
+  home.stateVersion = "21.11";
 }
