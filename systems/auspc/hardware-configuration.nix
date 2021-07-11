@@ -7,10 +7,10 @@
   imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];
   boot.initrd.availableKernelModules =
     [ "xhci_pci" "ahci" "nvme" "usbhid" "usb_storage" "sd_mod" ];
-  boot.initrd.kernelModules = [ ];
-  boot.kernelModules = [ "kvm-intel" ];
+  boot.initrd.kernelModules = [ "nvidia" "nvidia_modeset" "nvidia_uvm" "nvidia_drm" ];
+  boot.kernelModules = [ "kvm-intel"];
   boot.extraModulePackages = [ ];
-  boot.kernelParams = [ "nomodeset" ];
+  boot.kernelParams = [ "nvidia-drm.modeset=1" ];
   fileSystems = {
     "/" = {
       device = "/dev/nvme0n1p6";
