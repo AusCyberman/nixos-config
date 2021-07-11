@@ -37,7 +37,7 @@
     stable.url = "github:nixos/nixpkgs/nixos-21.05";
     unstable.url = "github:nixos/nixpkgs/nixos-unstable";
 
-    nixpkgs.follows = "master";
+    nixpkgs.follows = "unstable";
 
   };
   outputs = inputs@{ self, nixpkgs, home-manager, neovim, picom, rnix, idris2, idris2-pkgs, rust-overlay, my-xmonad, ... }:
@@ -82,10 +82,15 @@
       #    ++ (importNixFiles ./overlays);
 
     in {
-      nixosConfigurations.auspc = import ./systems/auspc {
+      nixosConfigurations = {
+	auspc = import ./systems/auspc {
         inherit nixpkgs config home-manager overlays inputs;
       };
+	secondpc = import ./systems/secondpc {
+	inherit nixpkgs config home-manager overlays inputs;
+	};
 
     };
 
+};
 }
