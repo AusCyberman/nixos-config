@@ -1,4 +1,4 @@
-{ nixpkgs, home-manager, config, overlays, inputs, ... }:
+{ nixpkgs, home-manager, config, overlays, inputs, agenix, ... }:
 nixpkgs.lib.nixosSystem {
   system = "x86_64-linux";
   modules = [
@@ -16,6 +16,10 @@ nixpkgs.lib.nixosSystem {
 
     }
     home-manager.nixosModules.home-manager
+    agenix.nixosModules.age
+    {
+      environment.systemPackages =  [ agenix.defaultPackage.x86_64-linux];
+    }
   ];
 
 }

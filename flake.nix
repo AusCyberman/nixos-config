@@ -3,7 +3,7 @@
   inputs = {
     #Non flakes
     picom = {
-      url = "github:yshui/picom";
+      url = "github:ibhagwan/picom";
       flake = false;
     };
     xmonad = {
@@ -11,8 +11,8 @@
       flake = false;
     };
     xmonad-contrib = {
-            url = "github:auscyberman/xmonad-contrib";
-#      url = "/home/auscyber/xmonad-contrib";
+      url = "github:xmonad/xmonad-contrib";
+      #      url = "/home/auscyber/xmonad-contrib";
       flake = false;
     };
     dotfiles = {
@@ -24,15 +24,14 @@
       url = "github:agda/agda-stdlib/";
       flake = false;
     };
-
-    eww.url = "github:auscyberman/eww";
-
     #    ghc = {
     #      url = "github:ghc/ghc";
     #      flake = false;
     #    };
 
     #flakes
+    agenix.url = "github:ryantm/agenix";
+    eww.url = "github:elkowar/eww";
     rust-overlay.url = "github:oxalica/rust-overlay";
     idris2-pkgs.url = "github:claymager/idris2-pkgs";
     idris2.url = "github:idris-lang/Idris2";
@@ -50,7 +49,7 @@
     nixpkgs.follows = "unstable";
 
   };
-  outputs = inputs@{ self, flake-utils, nixpkgs, home-manager, neovim, picom, rnix, idris2, idris2-pkgs, rust-overlay, dotfiles, eww, ... }:
+  outputs = inputs@{ self, flake-utils, nixpkgs, home-manager, neovim, picom, rnix, idris2, idris2-pkgs, rust-overlay, dotfiles, eww, agenix, ... }:
     with nixpkgs.lib;
     let
       config = {
@@ -65,9 +64,10 @@
       overlays = [
         rust-overlay.overlay
         (final: prev:
-        let system = final.stdenv.hostPlatform.system;
-        in
+          let system = final.stdenv.hostPlatform.system;
+          in
           {
+
 
             eww = eww.packages.${system}.eww;
             rnix-lsp = rnix.packages."${system}".rnix-lsp;
@@ -99,11 +99,13 @@
     })) //
     {
       nixosConfigurations.auspc = import ./systems/auspc {
-        inherit nixpkgs config home-manager overlays inputs;
+        inherit nixpkgs config home-manager overlays inputs agenix;
       };
 
     };
 
 }
+
+
 
 
