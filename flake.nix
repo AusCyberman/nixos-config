@@ -101,6 +101,9 @@
       nixosConfigurations.auspc = import ./systems/auspc {
         inherit nixpkgs config home-manager overlays inputs agenix;
       };
+	secondpc = import ./systems/secondpc {
+	inherit nixpkgs config home-manager overlays inputs;
+	};
 
     };
 
