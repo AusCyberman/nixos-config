@@ -11,7 +11,7 @@
       flake = false;
     };
     xmonad-contrib = {
-#            url = "github:auscyberman/xmonad-contrib";
+      #            url = "github:auscyberman/xmonad-contrib";
       url = "/home/auscyber/xmonad-contrib";
       flake = false;
     };
@@ -41,6 +41,7 @@
     #    neovim.url = "/home/auscyber/packages/neovim?dir=contrib";
     flake-utils.url = "github:numtide/flake-utils";
     home-manager.url = "github:nix-community/home-manager";
+    nixos-mailserver.url = "gitlab:simple-nixos-mailserver/nixos-mailserver";
 
     #nixpkgs
     master.url = "github:nixos/nixpkgs/master";
@@ -50,7 +51,7 @@
     nixpkgs.follows = "unstable";
 
   };
-  outputs = inputs@{ self, flake-utils, nixpkgs, home-manager, neovim, picom, rnix, idris2, idris2-pkgs, rust-overlay, dotfiles, eww, ... }:
+  outputs = inputs@{ self, master, flake-utils, nixpkgs, home-manager, neovim, picom, rnix, idris2, idris2-pkgs, rust-overlay, dotfiles, eww, nixos-mailserver, ... }:
     with nixpkgs.lib;
     let
       config = {
@@ -65,8 +66,8 @@
       overlays = [
         rust-overlay.overlay
         (final: prev:
-        let system = final.stdenv.hostPlatform.system;
-        in
+          let system = final.stdenv.hostPlatform.system;
+          in
           {
 
             eww = eww.packages.${system}.eww;
@@ -75,6 +76,7 @@
             idris2 = idris2.packages."${system}".idris2;
             neovim-nightly = neovim.packages."${system}".neovim;
 
+            minecraft-server = master.minecraft-server;
             haskellPackages = prev.haskellPackages.override {
               overrides = self: super: rec {
                 #ghc = prev.haskell.compiler.ghc901;                #          X11 = self.X11_1_10;
@@ -99,16 +101,17 @@
     })) //
     {
       nixosConfigurations = {
-	auspc = import ./systems/auspc {
-        inherit nixpkgs config home-manager overlays inputs;
-      };
-	secondpc = import ./systems/secondpc {
-	inherit nixpkgs config home-manager overlays inputs;
-	};
+        auspc = import ./systems/auspc {
+          inherit nixpkgs config home-manager overlays input;
+        };
+        secondpc = import ./systems/secondpc {
+          inherit nixpkgs config home-manager overlays inputs nixos-mailserver;
+        };
 
+      };
     };
-	};
 
 }
+
 
 
