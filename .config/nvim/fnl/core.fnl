@@ -5,8 +5,8 @@
 (local wo nvim.o)
 (local o nvim.o)
 (set o.mouse "a")
-(set o.guifont "Hasklug Nerd Font:12")
 (set o.termguicolors true)
+(set o.guifont "Hasklug Nerd Font:12")
 (_: colorscheme :pink_ocean)
 (set o.showmode false)
 (set bo.tabstop 4)
@@ -33,3 +33,7 @@
 (_: nmap :<F11> "<Expr>v:lua.switch_fullscreen() <Cr>")
 {:switch_fullscreen switch_fullscreen}
 (_: autocmd  "BufNewFile,BufRead" "*.agda" "setf agda")
+
+
+
+
