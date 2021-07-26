@@ -2,7 +2,13 @@
 NPM_PACKAGES="${HOME}/.npm-packages"
 export DENO_INSTALL="/home/auscyber/.deno"
 export PATH=$PATH:~/.cabal/bin:~/go/bin:~/.emacs.d/bin:/home/auscyber/.local/bin:~/.dotnet/tools:/usr/sbin:/snap/bin:$NPM_PACKAGES/bin:~/.luarocks/bin:/usr/local/go/bin:${DENO_INSTALL}/bin:/opt/jdk8u292-b10
-# Aliases 
+if [[ ! -e ~/antigen.zsh ]] ;
+then
+    curl -L git.io/antigen > ~/antigen.zsh
+fi
+
+# Aliases
+
 fpath=(~/.zsh $fpath)
 #promptinit; #prompt gentoo
 export _JAVA_AWT_WM_NONREPARENTING=1
@@ -46,7 +52,7 @@ export MANPATH="${MANPATH-$(manpath)}:$NPM_PACKAGES/share/man"
 export EDITOR=vim
 export editor=$EDITOR
 export BROWSER=firefox
-source ~/.cargo/env
+#source ~/.cargo/env
 # test -r /home/auscyber/.opam/opam-init/init.zsh && . /home/auscyber/.opam/opam-init/init.zsh > /dev/null 2> /dev/null || true
 fetch -s
 export GTK2_RC_FILES=$HOME/.gtkrc-2.0

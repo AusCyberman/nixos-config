@@ -42,7 +42,7 @@ os="$(source /etc/os-release && echo $PRETTY_NAME)"
 uptime="$(uptime -p | sed -e "s|up ||g" -e "s|,||g")"
 kernel="$(uname -r)"
 cpu="$(cat /proc/cpuinfo | grep "model name" | awk -F ":" '{ print $2}' | uniq)"
-gpu="$(nvidia-smi -L | sed -E 's/\(.*//' | awk -F ":" '{print $2}')"
+gpu="$(nvidia-smi -L 2>/dev/null | sed -E 's/\(.*//' | awk -F ":" '{print $2}')"
 
 lyric="$(cat ~/Music/phoebe/cleaned/*/* | shuf -n 1)"
 
