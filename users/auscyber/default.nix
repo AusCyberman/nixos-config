@@ -5,6 +5,13 @@ in
 rec {
   imports = [ ./picom.nix ];
   programs = {
+    git = {
+      enable = true;
+      signing = {
+        key = "0xC3F28549AD3115E8";
+        signByDefault = true;
+      };
+    };
     kakoune = {
       enable = true;
       plugins = with pkgs.kakounePlugins; [ kak-lsp parinfer-rust powerline-kak ];
@@ -72,7 +79,6 @@ rec {
       ripgrep
       discord
       polybarFull
-      git
       playerctl
       htop
       eclipses.eclipse-java
@@ -103,13 +109,15 @@ rec {
       gnome.gnome-keyring
       gnome.nautilus
       eww
+      wezterm
     ] ++ (with pkgs.lua51Packages; [ luarocks ]) ++ (with pkgs.haskellPackages; [
-      stylish-haskell
+      fourmolu
       agda-stdlib
       Agda
       taffybar
       my-xmonad
       haskell-language-server
+      libreoffice
       pinentry
       thunderbird
     ]) ++ ([
@@ -124,6 +132,7 @@ rec {
           xmonad
         ]))
     ]) ++ (with nodePackages; [
+      p3x-onenote
       yarn
       typescript-language-server
       typescript

@@ -5,6 +5,13 @@
 { config, lib, pkgs, ... }: {
 
   nix = {
+# Binary Cache for Haskell.nix
+binaryCachePublicKeys = [
+    "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ="
+    ];
+    binaryCaches = [
+        "https://hydra.iohk.io"
+      ];
     package = pkgs.nixUnstable;
     extraOptions = ''
       experimental-features = nix-command flakes
@@ -57,13 +64,13 @@
   # services.printing.enable = true;
   # Enable sound.
   sound.enable = true;
-  hardware.pulseaudio = {
-    enable = true;
-
-    # NixOS allows either a lightweight build (default) or full build of PulseAudio to be installed.
-    # Only the full build has Bluetooth support, so it must be selected here.
-    package = pkgs.pulseaudioFull;
-  };
+#  hardware.pulseaudio = {
+#    enable = true;
+#
+#    # NixOS allows either a lightweight build (default) or full build of PulseAudio to be installed.
+#    # Only the full build has Bluetooth support, so it must be selected here.
+#    package = pkgs.pulseaudioFull;
+#  };
   #  services.jack = {
   #	jackd.enable = true;
   #
@@ -139,12 +146,30 @@
   programs.dconf.enable = true;
 
   services = {
+    printing = {
+      drivers = with pkgs; [cnijfilter_2_80 cnijfilter2 cups-bjnp];
+      enable = true;
+    };
+        mopidy = {
+      enable = true;
+      extensionPackages = with pkgs; [mopidy-mpd mopidy-spotify mopidy-iris];
+      configuration = ''
+      '' ;
+      #++ builtins.readFile config.age.secrets.spotify_api.path;
+    };
     accounts-daemon = {
       enable = true;
     };
 
     blueman.enable = true;
-
+    pipewire = {
+      enable = true;
+      alsa.enable = true;
+      pulse = {
+        enable = true;
+        # package = pkgs.pulseaudioFull;
+      };
+    };
     openssh = {
       enable = true;
       forwardX11 = true;
@@ -203,6 +228,7 @@
   virtualisation.libvirtd.enable = true;
   environment.pathsToLink = [ "/share/agda" ];
 
+  age.secrets.spotify_api.file = ../../secrets/spotify_api.age;
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;
