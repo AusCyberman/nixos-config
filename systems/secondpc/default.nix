@@ -1,4 +1,4 @@
-{ nixpkgs, home-manager, config, overlays, inputs, ... }:
+{ nixpkgs, home-manager, config, overlays, inputs, nixos-mailserver, ... }:
 nixpkgs.lib.nixosSystem {
   system = "x86_64-linux";
   modules = [
@@ -6,6 +6,9 @@ nixpkgs.lib.nixosSystem {
     ./hardware-configuration.nix
     ./../../modules/system/grub.nix
     ./boot.nix
+    nixos-mailserver.nixosModule
+    ./mailserver.nix
+    ./minecraft.nix
     {
       home-manager = {
         useGlobalPkgs = true;

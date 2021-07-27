@@ -88,7 +88,7 @@
     extraGroups = [
       "jackaudio"
       "audio"
-      "libvirtd"
+#      "libvirtd"
       "plugdev"
       "wheel"
       "docker"
@@ -123,54 +123,54 @@
     OVMF
     virtmanager
     dconf
-    
+
     #Required for vscode
     nodejs-14_x
   ];
   programs.steam.enable = true;
   programs.dconf.enable = true;
 
-  services.xserver = {
-    layout = "us";
-    enable = true;
-    config = ''
-
-      Section "InputClass"
-                  Identifier "My Mouse"
-                  MatchIsPointer "yes"
-                  Option "AccelerationProfile" "-1"
-                  Option "AccelerationScheme" "none"
-                  Option "AccelSpeed" "-1"
-      EndSection
-         '';
-    videoDrivers = [ "intel" ];
-    #   videoDrivers = [ "nouveau" ];
-    displayManager.lightdm = {
-      enable = true;
-      greeter.enable = true;
-      background = "/usr/share/pixmaps/background1.jpg";
-    };
-#    desktopManager.plasma5.enable = true;
-    #   displayManager.startx.enable = true;
-    displayManager.defaultSession = "none+xmonad";
-    #   displayManager.autoLogin = {
-    #   	enable = true;
-    #   	user = "auscyber";
-    #   };
-    windowManager.awesome = {
-      enable = true;
-      luaModules = with pkgs.luaPackages; [ luarocks ];
-    };
-    windowManager.xmonad = {
-      enable = true;
-      extraPackages = haskellPackages:
-        with haskellPackages; [
-          xmonad-contrib
-          xmonad
-        ];
-
-    };
-  };
+#  services.xserver = {
+#    layout = "us";
+#    enable = true;
+#    config = ''
+#
+#      Section "InputClass"
+#                  Identifier "My Mouse"
+#                  MatchIsPointer "yes"
+#                  Option "AccelerationProfile" "-1"
+#                  Option "AccelerationScheme" "none"
+#                  Option "AccelSpeed" "-1"
+#      EndSection
+#         '';
+#    videoDrivers = [ "intel" ];
+#    #   videoDrivers = [ "nouveau" ];
+#    displayManager.lightdm = {
+#      enable = true;
+#      greeter.enable = true;
+#      background = "/usr/share/pixmaps/background1.jpg";
+#    };
+##    desktopManager.plasma5.enable = true;
+#    #   displayManager.startx.enable = true;
+#    displayManager.defaultSession = "none+xmonad";
+#    #   displayManager.autoLogin = {
+#    #   	enable = true;
+#    #   	user = "auscyber";
+#    #   };
+#    windowManager.awesome = {
+#      enable = true;
+#      luaModules = with pkgs.luaPackages; [ luarocks ];
+#    };
+#    windowManager.xmonad = {
+#      enable = true;
+#      extraPackages = haskellPackages:
+#        with haskellPackages; [
+#          xmonad-contrib
+#          xmonad
+#        ];
+#
+#    };
+#  };
   hardware.opengl.driSupport32Bit = true;
   #  services.cron = {
   #    enable = true;
@@ -180,7 +180,7 @@
   #  };
 
   virtualisation.docker.enable = true;
-  virtualisation.libvirtd.enable = true;
+#  virtualisation.libvirtd.enable = true;
   environment.pathsToLink = [ "/share/agda" ];
 
   # Some programs need SUID wrappers, can be configured further or are

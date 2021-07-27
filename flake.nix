@@ -77,7 +77,7 @@
             idris2 = idris2.packages."${system}".idris2;
             neovim-nightly = neovim.packages."${system}".neovim;
 
-            minecraft-server = master.minecraft-server;
+            minecraft-server = (import master {inherit system config;}).minecraft-server;
             haskellPackages = prev.haskellPackages.override {
               overrides = self: super: rec {
                 #ghc = prev.haskell.compiler.ghc901;                #          X11 = self.X11_1_10;
