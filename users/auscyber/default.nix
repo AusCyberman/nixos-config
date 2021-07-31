@@ -24,16 +24,31 @@ rec {
         set mouse=a
       '';
     };
+    direnv = {
+      enable = true;
+      nix-direnv = {
+        enable = true;
+        enableFlakes = true;
+      };
+    };
     command-not-found.enable = true;
     home-manager.enable = true;
   };
-#  xdg.configFile."nvim/parser/c.so".source = "${pkgs.tree-sitter.builtGrammars.tree-sitter-c}/parser";
-#  xdg.configFile."nvim/parser/lua.so".source = "${pkgs.tree-sitter.builtGrammars.tree-sitter-lua}/parser";
-#  xdg.configFile."nvim/parser/rust.so".source = "${pkgs.tree-sitter.builtGrammars.tree-sitter-rust}/parser";
-#  xdg.configFile."nvim/parser/python.so".source = "${pkgs.tree-sitter.builtGrammars.tree-sitter-python}/parser";
+  xdg.configFile."nvim/parser/c.so".source = "${pkgs.tree-sitter.builtGrammars.tree-sitter-c}/parser";
+  xdg.configFile."nvim/parser/lua.so".source = "${pkgs.tree-sitter.builtGrammars.tree-sitter-lua}/parser";
+  xdg.configFile."nvim/parser/rust.so".source = "${pkgs.tree-sitter.builtGrammars.tree-sitter-rust}/parser";
+  xdg.configFile."nvim/parser/python.so".source = "${pkgs.tree-sitter.builtGrammars.tree-sitter-python}/parser";
+  xdg.configFile."nvim/parser/nix.so".source = "${pkgs.tree-sitter.builtGrammars.tree-sitter-nix}/parser";
 
+
+  xdg.configFile."nvim/fnl/plugins/sqlite.fnl".text = ''
+  (module plugins.sqlite)
+  (print "hi")
+  (set vim.g.sql_clib_path "${pkgs.sqlite.out}/lib/libsqlite3.so")
+    '';
 
   services = {
+    lorri.enable = true;
     dunst.enable = false;
     gpg-agent = {
       enable = true;
@@ -48,17 +63,17 @@ rec {
 
   home.packages = with pkgs;
     [
-      direnv
       #  st
       #  ((pkgs.gradleGen.override {
       #    java = jdk8;
       #  }).gradle_latest)
+      rclone
       neovim-nightly
       firefox
       tmux
       rust-analyzer
       wineWowPackages.stable
-      emacs
+      emacsGcc
       kotlin
       pcmanfm
       fzf
@@ -100,7 +115,7 @@ rec {
       #  starship ardour
       slack
       #  luaPackages.lua-lsp
-      idris2
+      #idris2
       stdenv.cc.cc.lib
       grub2_efi
       (python3.withPackages (p: with p; [ pynvim ]))
@@ -110,10 +125,11 @@ rec {
       gnome.nautilus
       eww
       wezterm
+      zoom-us
+      file
+      (agda.withPackages (p: [ p.standard-library p.cubical p.agda-categories ]))
     ] ++ (with pkgs.lua51Packages; [ luarocks ]) ++ (with pkgs.haskellPackages; [
       fourmolu
-      agda-stdlib
-      Agda
       taffybar
       my-xmonad
       haskell-language-server
@@ -141,6 +157,6 @@ rec {
   #    ++ (with ocamlPackages; [utop dune ocaml opam merlin]);
   home.username = "auscyber";
   home.homeDirectory = "/home/auscyber";
-  home.sessionVariables.EDITOR = "nvim";
+  home.sessionVariables.EDITOR ="nvim";
   home.stateVersion = "21.11";
 }

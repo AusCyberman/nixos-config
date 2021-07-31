@@ -8,9 +8,11 @@
 # Binary Cache for Haskell.nix
 binaryCachePublicKeys = [
     "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ="
+    "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
     ];
     binaryCaches = [
         "https://hydra.iohk.io"
+        "https://nix-community.cachix.org"
       ];
     package = pkgs.nixUnstable;
     extraOptions = ''
@@ -193,7 +195,6 @@ binaryCachePublicKeys = [
       displayManager.lightdm = {
         enable = true;
         greeter.enable = true;
-        background = "/usr/share/pixmaps/background1.jpg";
       };
        desktopManager.plasma5.enable = true;
       #   displayManager.startx.enable = true;

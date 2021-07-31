@@ -6,43 +6,26 @@
       url = "github:ibhagwan/picom";
       flake = false;
     };
-    xmonad = {
-      url = "github:auscyberman/xmonad";
-      flake = false;
-    };
-    xmonad-contrib = {
-      #            url = "github:auscyberman/xmonad-contrib";
-      #url = "/home/auscyber/xmonad-contrib";
-      url = "github:xmonad/xmonad-contrib";
-      flake = false;
-    };
-    dotfiles = {
-      #      url = "github:auscyberman/dotfiles?dir=xmonad";
-      url = "/home/auscyber/dotfiles";
-      flake = false;
-    };
-    agda-stdlib = {
-      url = "github:agda/agda-stdlib/";
-      flake = false;
-    };
-    #    ghc = {
+        #    ghc = {
     #      url = "github:ghc/ghc";
     #      flake = false;
     #    };
 
     #flakes
+    xmonad-config.url = "/home/auscyber/dotfiles/xmonad-config";
     agenix.url = "github:ryantm/agenix";
     eww.url = "github:elkowar/eww";
     rust-overlay.url = "github:oxalica/rust-overlay";
-    idris2-pkgs.url = "github:claymager/idris2-pkgs";
+    #idris2-pkgs.url = "github:claymager/idris2-pkgs";
     idris2.url = "github:idris-lang/Idris2";
     rnix.url = "github:nix-community/rnix-lsp";
     neovim.url = "github:neovim/neovim?dir=contrib";
     #    neovim.url = "/home/auscyber/packages/neovim?dir=contrib";
-    flake-utils.url = "github:numtide/flake-utils";
     home-manager.url = "github:nix-community/home-manager";
     nixos-mailserver.url = "gitlab:simple-nixos-mailserver/nixos-mailserver";
+    emacs.url = "github:/nix-community/emacs-overlay";
 
+    flake-utils.url = "github:numtide/flake-utils";
     #nixpkgs
     master.url = "github:nixos/nixpkgs/master";
     stable.url = "github:nixos/nixpkgs/nixos-21.05";
@@ -51,7 +34,7 @@
     nixpkgs.follows = "unstable";
 
   };
-  outputs = inputs@{ self, master, flake-utils, nixpkgs, home-manager, neovim, picom, rnix, idris2, idris2-pkgs, rust-overlay, dotfiles, eww, nixos-mailserver, agenix, ... }:
+  outputs = inputs@{ self, master,  flake-utils, nixpkgs, home-manager, neovim, picom, rnix, idris2,  rust-overlay,  eww, nixos-mailserver, agenix, xmonad-config, ... }:
     with nixpkgs.lib;
     let
       config = {
@@ -64,6 +47,8 @@
         (lists.forEach (mapAttrsToList (name: _: path + ("/" + name))
           (filterAttrs filterNixFiles (builtins.readDir path)))) import;
       overlays = [
+        xmonad-config.overlay
+        inputs.emacs.overlay
         rust-overlay.overlay
         (final: prev:
           let system = final.stdenv.hostPlatform.system;
@@ -74,23 +59,13 @@
             eww = eww.packages.${system}.eww;
             rnix-lsp = rnix.packages."${system}".rnix-lsp;
             picom = (prev.picom.overrideAttrs (attrs: { src = picom; }));
-            idris2 = idris2.packages."${system}".idris2;
-            neovim-nightly = neovim.packages."${system}".neovim;
+#            idris2 = idris2.packages."${system}".idris2;
+          neovim-nightly = neovim.packages."${system}".neovim.overrideAttrs (attrs: 
+          {
+            nativeBuildInputs = with final.pkgs; [ unzip cmake pkgconfig gettext tree-sitter gcc ];
+          });
 
             minecraft-server = (import master {inherit system config;}).minecraft-server;
-            haskellPackages = prev.haskellPackages.override {
-              overrides = self: super: rec {
-                #ghc = prev.haskell.compiler.ghc901;                #          X11 = self.X11_1_10;
-                xmonad = self.callCabal2nix "xmonad" inputs.xmonad { };
-                xmonad-contrib =
-                  self.callCabal2nix "xmonad-contrib" inputs.xmonad-contrib { };
-                my-xmonad = self.callCabal2nix "my-xmonad" (inputs.dotfiles + "/xmonad") { };
-
-                agda-stdlib =
-                  self.callCabal2nix "agda-stdlib-utils" inputs.agda-stdlib { };
-              };
-            };
-
           })
       ];
 
@@ -103,7 +78,7 @@
     {
       nixosConfigurations = {
         auspc = import ./systems/auspc {
-          inherit nixpkgs config home-manager overlays input agenix;
+          inherit nixpkgs config home-manager overlays inputs agenix;
         };
         secondpc = import ./systems/secondpc {
           inherit nixpkgs config home-manager overlays inputs nixos-mailserver;
