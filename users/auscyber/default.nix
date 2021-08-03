@@ -99,7 +99,7 @@ rec {
       eclipses.eclipse-java
       starship
       fish
-      feh
+      nitrogen
       maim
       teams
       gcc
@@ -127,6 +127,7 @@ rec {
       wezterm
       zoom-us
       file
+      mitscheme
       (agda.withPackages (p: [ p.standard-library p.cubical p.agda-categories ]))
     ] ++ (with pkgs.lua51Packages; [ luarocks ]) ++ (with pkgs.haskellPackages; [
       fourmolu

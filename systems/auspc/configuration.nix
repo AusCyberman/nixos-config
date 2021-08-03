@@ -104,6 +104,10 @@ binaryCachePublicKeys = [
     enable = true;
 
   };
+  programs.ssh = {
+    startAgent = true;
+    extraConfig = "AddKeysToAgent yes";
+  };
   security.sudo = {
     enable = true;
     #	extraRules = {

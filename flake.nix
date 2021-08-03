@@ -6,12 +6,17 @@
       url = "github:ibhagwan/picom";
       flake = false;
     };
-        #    ghc = {
+    #    ghc = {
     #      url = "github:ghc/ghc";
     #      flake = false;
     #    };
 
     #flakes
+    wezterm = {
+      url = "/home/auscyber/code/wezterm";
+      flake = false;
+#      submodules = true;
+    };
     xmonad-config.url = "/home/auscyber/dotfiles/xmonad-config";
     agenix.url = "github:ryantm/agenix";
     eww.url = "github:elkowar/eww";
@@ -24,7 +29,6 @@
     home-manager.url = "github:nix-community/home-manager";
     nixos-mailserver.url = "gitlab:simple-nixos-mailserver/nixos-mailserver";
     emacs.url = "github:/nix-community/emacs-overlay";
-
     flake-utils.url = "github:numtide/flake-utils";
     #nixpkgs
     master.url = "github:nixos/nixpkgs/master";
@@ -34,7 +38,7 @@
     nixpkgs.follows = "unstable";
 
   };
-  outputs = inputs@{ self, master,  flake-utils, nixpkgs, home-manager, neovim, picom, rnix, idris2,  rust-overlay,  eww, nixos-mailserver, agenix, xmonad-config, ... }:
+  outputs = inputs@{ self, master, flake-utils, nixpkgs, home-manager, neovim, picom, rnix, idris2, rust-overlay, eww, nixos-mailserver, agenix, xmonad-config, ... }:
     with nixpkgs.lib;
     let
       config = {
@@ -42,7 +46,7 @@
         allowUnfree = true;
       };
       filterNixFiles = k: v: v == "regular" && hasSuffix ".nix" k;
-
+      masterp = import master;
       importNixFiles = path:
         (lists.forEach (mapAttrsToList (name: _: path + ("/" + name))
           (filterAttrs filterNixFiles (builtins.readDir path)))) import;
@@ -59,13 +63,21 @@
             eww = eww.packages.${system}.eww;
             rnix-lsp = rnix.packages."${system}".rnix-lsp;
             picom = (prev.picom.overrideAttrs (attrs: { src = picom; }));
-#            idris2 = idris2.packages."${system}".idris2;
-          neovim-nightly = neovim.packages."${system}".neovim.overrideAttrs (attrs: 
-          {
-            nativeBuildInputs = with final.pkgs; [ unzip cmake pkgconfig gettext tree-sitter gcc ];
-          });
+            #            idris2 = idris2.packages."${system}".idris2;
+            #            wezterm = (masterp {inherit system;}).wezterm;
+            wezterm = prev.wezterm.overrideAttrs (attrs: {
+              src = inputs.wezterm;
+              cargoDeps = attrs.cargoDeps.overrideAttrs (cattrs: {
+                src = inputs.wezterm;
+                outputHash = "sha256-iNv9JEu1aQBxhwlugrl2GdoSvF9cYgM6TXBqamrPjFo=";
+              });
+            });
+            neovim-nightly = neovim.packages."${system}".neovim.overrideAttrs (attrs:
+              {
+                nativeBuildInputs = with final.pkgs; [ unzip cmake pkgconfig gettext tree-sitter gcc ];
+              });
 
-            minecraft-server = (import master {inherit system config;}).minecraft-server;
+            minecraft-server = (import master { inherit system config; }).minecraft-server;
           })
       ];
 
