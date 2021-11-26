@@ -1,9 +1,11 @@
 { config, pkgs, system, lib, ... }:
 rec {
+  targets.genericLinux.enable = true;
   home.packages = with pkgs; [
     rnix-lsp
-    emacsGcc
+    polybar
   ];
-
-
+  home.sessionVariables = {
+    NIXFLAKE = "$HOME/.config/nixpkgs#arch";
+  };
 }

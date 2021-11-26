@@ -15,7 +15,7 @@
     wezterm = {
       url = "/home/auscyber/code/wezterm";
       flake = false;
-#      submodules = true;
+      #      submodules = true;
     };
     xmonad-config.url = "/home/auscyber/dotfiles/xmonad-config";
     agenix.url = "github:ryantm/agenix";
