@@ -12,10 +12,6 @@ rec {
         signByDefault = true;
       };
     };
-    kakoune = {
-      enable = true;
-      plugins = with pkgs.kakounePlugins; [ kak-lsp parinfer-rust powerline-kak ];
-    };
     vim = {
       enable = true;
       plugins = with pkgs.vimPlugins; [ vim-airline vim-addon-nix ];
@@ -40,7 +36,6 @@ rec {
   #   '';
 
   services = {
-    lorri.enable = true;
     dunst.enable = false;
     gpg-agent = {
       enable = true;

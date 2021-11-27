@@ -8,7 +8,6 @@
         enable = true;
       };
     };
-    #zsh.enable = true;
     home-manager.enable = true;
   };
   services.lorri = {

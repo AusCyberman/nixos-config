@@ -71,7 +71,7 @@
             homeDirectory = "/home/auscyber";
             username = "auscyber";
             configuration = {
-              imports = [ ./arch.nix ./agda.nix ./emacs.nix ./neovim.nix ];
+              imports = [ ./arch.nix ./modules/agda.nix ./modules/emacs.nix ./modules/neovim.nix ./modules/kakoune.nix ];
             };
           };
         };
