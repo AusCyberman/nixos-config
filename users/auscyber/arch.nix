@@ -5,7 +5,4 @@ rec {
     rnix-lsp
     polybar
   ];
-  home.sessionVariables = {
-    NIXFLAKE = "$HOME/.config/nixpkgs#arch";
-  };
 }
