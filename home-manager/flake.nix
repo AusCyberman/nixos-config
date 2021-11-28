@@ -1,6 +1,8 @@
 {
   description = "auscyber home-manager flake";
+
   inputs = {
+    rust-overlay.url = "github:oxalica/rust-overlay";
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     #    home-manager.url = "github:nix-community/home-manager";
     home-manager.url = "/home/auscyber/packages/home-manager?ref=neovim-use-plugin"; # github:auscyberman/home-manager?ref=neovim-use-plugin";
@@ -10,17 +12,16 @@
     nix-doom-emacs.url = "github:vlaci/nix-doom-emacs";
   };
 
-  outputs = inputs@{ home-manager, nixpkgs, emacs-overlay, nix-doom-emacs, neovim, ... }:
+  outputs = inputs@{ home-manager, nixpkgs, emacs-overlay, nix-doom-emacs, neovim, rust-overlay, ... }:
     let
       #      fmerge = cfg: f: merge cfg (f cfg);
       overlays = [
+        rust-overlay
         emacs-overlay.overlay
         (final: prev:
           let system = final.stdenv.hostPlatform.system;
           in
           {
-
-
             #eww = eww.packages.${system}.eww;
             #rnix-lsp = rnix.packages."${system}".rnix-lsp;
             #picom = (prev.picom.overrideAttrs (attrs: { src = picom; }));
