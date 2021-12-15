@@ -12,12 +12,6 @@
     #    };
 
     #flakes
-    wezterm = {
-      url = "/home/auscyber/code/wezterm";
-      flake = false;
-      #      submodules = true;
-    };
-    xmonad-config.url = "/home/auscyber/dotfiles/xmonad-config";
     agenix.url = "github:ryantm/agenix";
     eww.url = "github:elkowar/eww";
     rust-overlay.url = "github:oxalica/rust-overlay";
@@ -25,8 +19,6 @@
     idris2.url = "github:idris-lang/Idris2";
     rnix.url = "github:nix-community/rnix-lsp";
     neovim.url = "github:neovim/neovim?dir=contrib";
-    #    neovim.url = "/home/auscyber/packages/neovim?dir=contrib";
-    home-manager.url = "github:nix-community/home-manager";
     nixos-mailserver.url = "gitlab:simple-nixos-mailserver/nixos-mailserver";
     emacs.url = "github:/nix-community/emacs-overlay";
     flake-utils.url = "github:numtide/flake-utils";
@@ -38,7 +30,7 @@
     nixpkgs.follows = "unstable";
 
   };
-  outputs = inputs@{ self, master, flake-utils, nixpkgs, home-manager, neovim, picom, rnix, idris2, rust-overlay, eww, nixos-mailserver, agenix, xmonad-config, ... }:
+  outputs = inputs@{ self, master, flake-utils, nixpkgs, home-manager, neovim, picom, rnix, idris2, rust-overlay, eww, nixos-mailserver, agenix, ... }:
     with nixpkgs.lib;
     let
       config = {
@@ -51,7 +43,6 @@
         (lists.forEach (mapAttrsToList (name: _: path + ("/" + name))
           (filterAttrs filterNixFiles (builtins.readDir path)))) import;
       overlays = [
-        xmonad-config.overlay
         inputs.emacs.overlay
         rust-overlay.overlay
         (final: prev:
@@ -90,17 +81,13 @@
     {
       nixosConfigurations = {
         auspc = import ./systems/auspc {
-          inherit nixpkgs config home-manager overlays inputs agenix;
+          inherit nixpkgs config overlays inputs agenix;
         };
         secondpc = import ./systems/secondpc {
-          inherit nixpkgs config home-manager overlays inputs nixos-mailserver;
+          inherit nixpkgs config overlays inputs nixos-mailserver;
         };
 
       };
     };
-
 }
-
-
-
 
