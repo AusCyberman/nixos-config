@@ -6,10 +6,6 @@
       url = "github:ibhagwan/picom";
       flake = false;
     };
-    #    ghc = {
-    #      url = "github:ghc/ghc";
-    #      flake = false;
-    #    };
 
     #flakes
     agenix.url = "github:ryantm/agenix";

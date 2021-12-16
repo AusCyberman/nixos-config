@@ -1,4 +1,4 @@
-{ nixpkgs, home-manager, config, overlays, inputs, nixos-mailserver, ... }:
+{ nixpkgs,  config, overlays, inputs, nixos-mailserver, ... }:
 nixpkgs.lib.nixosSystem {
   system = "x86_64-linux";
   modules = [
@@ -10,15 +10,15 @@ nixpkgs.lib.nixosSystem {
     ./mailserver.nix
     ./minecraft.nix
     {
-      home-manager = {
-        useGlobalPkgs = true;
-        useUserPackages = true;
-        users.auscyber = import ../../users/auscyber;
-      };
+#      home-manager = {
+#        useGlobalPkgs = true;
+#        useUserPackages = true;
+#        users.auscyber = import ../../users/auscyber;
+#      };
       nixpkgs = { inherit config overlays; };
 
     }
-    home-manager.nixosModules.home-manager
+#    home-manager.nixosModules.home-manager
   ];
 
 }
