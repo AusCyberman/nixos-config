@@ -13,13 +13,15 @@
     nix-doom-emacs.url = "github:vlaci/nix-doom-emacs";
     idris2-pkgs.url = "github:claymager/idris2-pkgs";
     local-nixpkgs.url = "/opt/nixpkgs";
+    home-manager.url = "/home/auscyber/packages/home-manager?neovim-use-plugin";
+    home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
     #idris2-pkgs.url = "github:claymager/idris2-pkgs";
     idris2.url = "github:idris-lang/Idris2";
     rnix.url = "github:nix-community/rnix-lsp";
     neovim = {
-        inputs.nixpkgs.follows = "local-nixpkgs";
-        url = "github:neovim/neovim?dir=contrib";
+      inputs.nixpkgs.follows = "local-nixpkgs";
+      url = "github:neovim/neovim?dir=contrib";
     };
 
     nixos-mailserver.url = "gitlab:simple-nixos-mailserver/nixos-mailserver";
@@ -33,58 +35,77 @@
     nixpkgs.follows = "unstable";
 
   };
-  outputs = inputs@{ self, master, flake-utils, nixpkgs, home-manager, neovim
-    , picom, rnix, idris2, rust-overlay, eww, nixos-mailserver, agenix, nix-doom-emacs, idris2-pkgs, ... }:
-    with nixpkgs.lib;
-    let
-      config = {
-        allowBroken = true;
-        allowUnfree = true;
-      };
-      filterNixFiles = k: v: v == "regular" && hasSuffix ".nix" k;
-      masterp = import master;
-      importNixFiles = path:
-        (lists.forEach (mapAttrsToList (name: _: path + ("/" + name))
-          (filterAttrs filterNixFiles (builtins.readDir path)))) import;
-      overlays = [
-        inputs.emacs.overlay
-        rust-overlay.overlay
-        (final: prev:
-          let system = final.stdenv.hostPlatform.system;
-          in {
+  outputs =
+    inputs@{ self
+    , master
+    , flake-utils
+    , nixpkgs
+    , home-manager
+    , neovim
+    , picom
+    , rnix
+    , idris2
+    , rust-overlay
+    , eww
+    , nixos-mailserver
+    , agenix
+    , nix-doom-emacs
+    , idris2-pkgs
+    , ...
+    }:
+      with nixpkgs.lib;
+      let
+        config = {
+          allowBroken = true;
+          allowUnfree = true;
+        };
+        filterNixFiles = k: v: v == "regular" && hasSuffix ".nix" k;
+        masterp = import master;
+        importNixFiles = path:
+          (lists.forEach (mapAttrsToList (name: _: path + ("/" + name))
+            (filterAttrs filterNixFiles (builtins.readDir path)))) import;
+        overlays = [
+          inputs.emacs.overlay
+          rust-overlay.overlay
+          (final: prev:
+            let system = final.stdenv.hostPlatform.system;
+            in
+            {
 
-            eww = eww.packages.${system}.eww;
-            rnix-lsp = rnix.packages."${system}".rnix-lsp;
-            picom = (prev.picom.overrideAttrs (attrs: { src = picom; }));
-            #            idris2 = idris2.packages."${system}".idris2;
-            #            wezterm = (masterp {inherit system;}).wezterm;
-            wezterm = prev.wezterm.overrideAttrs (attrs: {
-              src = inputs.wezterm;
-              cargoDeps = attrs.cargoDeps.overrideAttrs (cattrs: {
+              eww = eww.packages.${system}.eww;
+              rnix-lsp = rnix.packages."${system}".rnix-lsp;
+              picom = (prev.picom.overrideAttrs (attrs: { src = picom; }));
+              #            idris2 = idris2.packages."${system}".idris2;
+              #            wezterm = (masterp {inherit system;}).wezterm;
+              wezterm = prev.wezterm.overrideAttrs (attrs: {
                 src = inputs.wezterm;
-                outputHash =
-                  "sha256-iNv9JEu1aQBxhwlugrl2GdoSvF9cYgM6TXBqamrPjFo=";
+                cargoDeps = attrs.cargoDeps.overrideAttrs (cattrs: {
+                  src = inputs.wezterm;
+                  outputHash =
+                    "sha256-iNv9JEu1aQBxhwlugrl2GdoSvF9cYgM6TXBqamrPjFo=";
+                });
               });
-            });
-            neovim-nightly = neovim.packages."${system}".neovim.override {
-              link-lstdcpp = true;
-              stdenv = prev.gcc11Stdenv;
-            };
+              neovim-nightly = neovim.packages."${system}".neovim.override {
+                link-lstdcpp = true;
+                stdenv = prev.gcc11Stdenv;
+              };
 
-            idris2 = final.idris2Pkgs.idris2;
-            idris2Pkgs = idris2-pkgs.packages."${system}";
-            minecraft-server =
-              (import master { inherit system config; }).minecraft-server;
-          })
-      ];
+              idris2 = final.idris2Pkgs.idris2;
+              idris2Pkgs = idris2-pkgs.packages."${system}";
+              minecraft-server =
+                (import master { inherit system config; }).minecraft-server;
+            })
+        ];
 
-      external_hm_modules = [ ./hm/. nix-doom-emacs.hmModule ];
-      #    ++ (importNixFiles ./overlays);
+        external_hm_modules = [ ./hm/. nix-doom-emacs.hmModule ];
+        #    ++ (importNixFiles ./overlays);
 
-    in (flake-utils.lib.eachDefaultSystem (system:
-      let pkgs = import <nixpkgs> { inherit system overlays; };
-      in {
-        apps.${system}.nvim = flake-utils.mkApp {
+      in
+      (flake-utils.lib.eachDefaultSystem (system:
+      let pkgs = import nixpkgs { inherit system overlays; };
+      in
+      {
+        apps.nvim = flake-utils.lib.mkApp {
           name = "nvim";
           drv = pkgs.neovim-nightly;
         };
@@ -98,18 +119,20 @@
           };
 
         };
-        homeConfigurations = builtins.mapAttrs (name: cfg:
-          home-manager.lib.homeManagerConfiguration (cfg // {
-            configuration = { config, lib, pkgs, ... }: {
-              imports = [ cfg.configuration ] ++ external_hm_modules;
-              home.sessionVariables = {
-                FLAKENAME = "${name}";
-                NIXFLAKE = "$HOME/dotfiles/nixos-config";
-              };
-              nixpkgs.overlays = overlays;
+        homeConfigurations = builtins.mapAttrs
+          (name: cfg:
+            home-manager.lib.homeManagerConfiguration (cfg // {
+              configuration = { config, lib, pkgs, ... }: {
+                imports = [ cfg.configuration ] ++ external_hm_modules;
+                home.sessionVariables = {
+                  FLAKENAME = "${name}";
+                  NIXFLAKE = "$HOME/dotfiles/nixos-config";
+                };
+                nixpkgs.overlays = overlays;
 
-            };
-          })) {
+              };
+            }))
+          {
             #            wsl = {
             #              system = "x86_64-linux";
             #              homeDirectory = "/home/auscyber";
