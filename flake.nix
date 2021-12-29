@@ -1,5 +1,4 @@
 {
-
   inputs = {
     #Non flakes
     picom = {
@@ -11,10 +10,18 @@
     agenix.url = "github:ryantm/agenix";
     eww.url = "github:elkowar/eww";
     rust-overlay.url = "github:oxalica/rust-overlay";
+    nix-doom-emacs.url = "github:vlaci/nix-doom-emacs";
+    idris2-pkgs.url = "github:claymager/idris2-pkgs";
+    local-nixpkgs.url = "/opt/nixpkgs";
+
     #idris2-pkgs.url = "github:claymager/idris2-pkgs";
     idris2.url = "github:idris-lang/Idris2";
     rnix.url = "github:nix-community/rnix-lsp";
-    neovim.url = "github:neovim/neovim?dir=contrib";
+    neovim = {
+        inputs.nixpkgs.follows = "local-nixpkgs";
+        url = "github:neovim/neovim?dir=contrib";
+    };
+
     nixos-mailserver.url = "gitlab:simple-nixos-mailserver/nixos-mailserver";
     emacs.url = "github:/nix-community/emacs-overlay";
     flake-utils.url = "github:numtide/flake-utils";
@@ -26,7 +33,8 @@
     nixpkgs.follows = "unstable";
 
   };
-  outputs = inputs@{ self, master, flake-utils, nixpkgs, home-manager, neovim, picom, rnix, idris2, rust-overlay, eww, nixos-mailserver, agenix, ... }:
+  outputs = inputs@{ self, master, flake-utils, nixpkgs, home-manager, neovim
+    , picom, rnix, idris2, rust-overlay, eww, nixos-mailserver, agenix, nix-doom-emacs, idris2-pkgs, ... }:
     with nixpkgs.lib;
     let
       config = {
@@ -43,9 +51,7 @@
         rust-overlay.overlay
         (final: prev:
           let system = final.stdenv.hostPlatform.system;
-          in
-          {
-
+          in {
 
             eww = eww.packages.${system}.eww;
             rnix-lsp = rnix.packages."${system}".rnix-lsp;
@@ -56,34 +62,84 @@
               src = inputs.wezterm;
               cargoDeps = attrs.cargoDeps.overrideAttrs (cattrs: {
                 src = inputs.wezterm;
-                outputHash = "sha256-iNv9JEu1aQBxhwlugrl2GdoSvF9cYgM6TXBqamrPjFo=";
+                outputHash =
+                  "sha256-iNv9JEu1aQBxhwlugrl2GdoSvF9cYgM6TXBqamrPjFo=";
               });
             });
-            neovim-nightly = neovim.packages."${system}".neovim.overrideAttrs (attrs:
-              {
-                nativeBuildInputs = with final.pkgs; [ unzip cmake pkgconfig gettext tree-sitter gcc ];
-              });
+            neovim-nightly = neovim.packages."${system}".neovim.override {
+              link-lstdcpp = true;
+              stdenv = prev.gcc11Stdenv;
+            };
 
-            minecraft-server = (import master { inherit system config; }).minecraft-server;
+            idris2 = final.idris2Pkgs.idris2;
+            idris2Pkgs = idris2-pkgs.packages."${system}";
+            minecraft-server =
+              (import master { inherit system config; }).minecraft-server;
           })
       ];
 
+      external_hm_modules = [ ./hm/. nix-doom-emacs.hmModule ];
       #    ++ (importNixFiles ./overlays);
 
-    in
-    (flake-utils.lib.eachDefaultSystem (system: {
-      apps.${system}.nvim = neovim.apps.${system}.nvim;
-    })) //
-    {
-      nixosConfigurations = {
-        auspc = import ./systems/auspc {
-          inherit nixpkgs config overlays inputs agenix;
+    in (flake-utils.lib.eachDefaultSystem (system:
+      let pkgs = import <nixpkgs> { inherit system overlays; };
+      in {
+        apps.${system}.nvim = flake-utils.mkApp {
+          name = "nvim";
+          drv = pkgs.neovim-nightly;
         };
-        secondpc = import ./systems/secondpc {
-          inherit nixpkgs config overlays inputs nixos-mailserver;
-        };
+      })) // {
+        nixosConfigurations = {
+          auspc = import ./systems/auspc {
+            inherit nixpkgs config overlays inputs agenix;
+          };
+          secondpc = import ./systems/secondpc {
+            inherit nixpkgs config overlays inputs nixos-mailserver;
+          };
 
+        };
+        homeConfigurations = builtins.mapAttrs (name: cfg:
+          home-manager.lib.homeManagerConfiguration (cfg // {
+            configuration = { config, lib, pkgs, ... }: {
+              imports = [ cfg.configuration ] ++ external_hm_modules;
+              home.sessionVariables = {
+                FLAKENAME = "${name}";
+                NIXFLAKE = "$HOME/dotfiles/nixos-config";
+              };
+              nixpkgs.overlays = overlays;
+
+            };
+          })) {
+            #            wsl = {
+            #              system = "x86_64-linux";
+            #              homeDirectory = "/home/auscyber";
+            #              username = "auscyber";
+            #            };
+
+            nixos = {
+              system = "x86_64-linux";
+              homeDirectory = "/home/auscber";
+              username = "auscyber";
+              configuration = {
+                imports = [ ./hm/nixos.nix ./hm/agda.nix ./hm/emacs.nix ];
+              };
+            };
+            arch = {
+              system = "x86_64-linux";
+              homeDirectory = "/home/auscyber";
+              username = "auscyber";
+              configuration = {
+                imports = [
+                  ./hm/arch.nix
+                  ./hm/modules/agda.nix
+                  ./hm/modules/emacs.nix
+                  ./hm/modules/neovim.nix
+                  ./hm/modules/kakoune.nix
+                  ./hm/modules/idris2.nix
+                ];
+              };
+            };
+          };
       };
-    };
 }
 
