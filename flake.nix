@@ -12,8 +12,8 @@
     rust-overlay.url = "github:oxalica/rust-overlay";
     nix-doom-emacs.url = "github:vlaci/nix-doom-emacs";
     idris2-pkgs.url = "github:claymager/idris2-pkgs";
-    local-nixpkgs.url = "/opt/nixpkgs";
-    home-manager.url = "/home/auscyber/packages/home-manager?neovim-use-plugin";
+    local-nixpkgs.url = "github:auscyberman/nixpkgs";
+    home-manager.url = "github:auscyberman/home-manager?neovim-use-plugin";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
     #idris2-pkgs.url = "github:claymager/idris2-pkgs";

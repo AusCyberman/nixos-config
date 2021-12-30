@@ -526,14 +526,17 @@
         ]
       },
       "locked": {
-        "lastModified": 1637981064,
-        "narHash": "sha256-Q1Aiw19liUMew/1LCIh4j5zYqvmtH/lq6IsPkfmBIPY=",
-        "type": "git",
-        "url": "file:///home/auscyber/packages/home-manager"
+        "lastModified": 1637915295,
+        "narHash": "sha256-jWW2Q83O4O/TV3PDsZkEo0bhKzlLBhJ5CGqQFMM05lE=",
+        "owner": "auscyberman",
+        "repo": "home-manager",
+        "rev": "a28cf79a78040b4e6d8d50a39760a296d5e95dd6",
+        "type": "github"
       },
       "original": {
-        "type": "git",
-        "url": "file:///home/auscyber/packages/home-manager"
+        "owner": "auscyberman",
+        "repo": "home-manager",
+        "type": "github"
       }
     },
     "idrall": {
@@ -753,15 +756,15 @@
       "locked": {
         "lastModified": 1638620633,
         "narHash": "sha256-FEmQPS0mRjlr1S0lflqjE7AjX/OOZLkIrY6sYFQF+9g=",
-        "ref": "master",
+        "owner": "auscyberman",
+        "repo": "nixpkgs",
         "rev": "e326a9bd9e06b348284cb8b77ab30ff956f74343",
-        "revCount": 334388,
-        "type": "git",
-        "url": "file:///opt/nixpkgs"
+        "type": "github"
       },
       "original": {
-        "type": "git",
-        "url": "file:///opt/nixpkgs"
+        "owner": "auscyberman",
+        "repo": "nixpkgs",
+        "type": "github"
       }
     },
     "lsp": {
