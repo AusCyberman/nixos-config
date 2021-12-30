@@ -1,4 +1,7 @@
 #!/bin/sh
+nix () {
+    nix --experimental-features 'nix-command flakes' $@
+}
 set -e
 if test -z "$1"
 then

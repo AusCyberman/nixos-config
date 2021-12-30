@@ -97,7 +97,10 @@
             })
         ];
 
-        external_hm_modules = [ ./hm/. nix-doom-emacs.hmModule ];
+        base-home = name: system: {
+          inherit system name;
+          home = "/home/${name}";
+        };
         #    ++ (importNixFiles ./overlays);
 
       in
@@ -123,7 +126,7 @@
           (name: cfg:
             home-manager.lib.homeManagerConfiguration (cfg // {
               configuration = { config, lib, pkgs, ... }: {
-                imports = [ cfg.configuration ] ++ external_hm_modules;
+                imports = [ cfg.configuration ./hm/. nix-doom-emacs.hmModule ];
                 home.sessionVariables = {
                   FLAKENAME = "${name}";
                   NIXFLAKE = "$HOME/dotfiles/nixos-config";
@@ -138,7 +141,7 @@
             #              homeDirectory = "/home/auscyber";
             #              username = "auscyber";
             #            };
-
+            manjaro = base-home "auscyber" "x86_64-linux";
             nixos = {
               system = "x86_64-linux";
               homeDirectory = "/home/auscber";
