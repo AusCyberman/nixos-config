@@ -13,14 +13,16 @@
     nix-doom-emacs.url = "github:vlaci/nix-doom-emacs";
     idris2-pkgs.url = "github:claymager/idris2-pkgs";
     local-nixpkgs.url = "github:auscyberman/nixpkgs";
-    home-manager.url = "github:auscyberman/home-manager?neovim-use-plugin";
-    home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    home-manager = {
+      url = "github:auscyberman/home-manager/neovim-use-plugin";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     #idris2-pkgs.url = "github:claymager/idris2-pkgs";
     idris2.url = "github:idris-lang/Idris2";
     rnix.url = "github:nix-community/rnix-lsp";
     neovim = {
-      inputs.nixpkgs.follows = "local-nixpkgs";
+      #      inputs.nixpkgs.follows = "local-nixpkgs";
       url = "github:neovim/neovim?dir=contrib";
     };
 
@@ -28,7 +30,7 @@
     emacs.url = "github:/nix-community/emacs-overlay";
     flake-utils.url = "github:numtide/flake-utils";
     #nixpkgs
-    master.url = "github:nixos/nixpkgs/master";
+    #    master.url = "github:nixos/nixpkgs/master";
     stable.url = "github:nixos/nixpkgs/nixos-21.05";
     unstable.url = "github:nixos/nixpkgs/nixos-unstable";
 
@@ -37,7 +39,7 @@
   };
   outputs =
     inputs@{ self
-    , master
+      #    , master
     , flake-utils
     , nixpkgs
     , home-manager
@@ -60,13 +62,12 @@
           allowUnfree = true;
         };
         filterNixFiles = k: v: v == "regular" && hasSuffix ".nix" k;
-        masterp = import master;
         importNixFiles = path:
           (lists.forEach (mapAttrsToList (name: _: path + ("/" + name))
             (filterAttrs filterNixFiles (builtins.readDir path)))) import;
         overlays = [
-          inputs.emacs.overlay
-          rust-overlay.overlay
+          inputs.emacs.overlays.default
+          rust-overlay.overlays.default
           (final: prev:
             let system = final.stdenv.hostPlatform.system;
             in
@@ -85,10 +86,10 @@
                     "sha256-iNv9JEu1aQBxhwlugrl2GdoSvF9cYgM6TXBqamrPjFo=";
                 });
               });
-              neovim-nightly = neovim.packages."${system}".neovim.override {
-                link-lstdcpp = true;
-                stdenv = prev.gcc11Stdenv;
-              };
+              neovim-nightly = neovim.packages."${system}".neovim.overrideAttrs (drv: {
+                #                link-lstdcpp = true;
+                propagatedBuildInputs = [ prev.gcc12Stdenv.cc.cc.lib ];
+              });
 
               idris2 = final.idris2Pkgs.idris2;
               idris2Pkgs = idris2-pkgs.packages."${system}";
@@ -103,9 +104,13 @@
         };
         #    ++ (importNixFiles ./overlays);
 
+
       in
       (flake-utils.lib.eachDefaultSystem (system:
-      let pkgs = import nixpkgs { inherit system overlays; };
+      let
+        pkgs = import nixpkgs {
+          inherit system overlays;
+        };
       in
       {
         apps.nvim = flake-utils.lib.mkApp {
@@ -124,7 +129,14 @@
         };
         homeConfigurations = builtins.mapAttrs
           (name: cfg:
+            let pkgs = import nixpkgs {
+              config.allowUnfree = true;
+              system = cfg.system;
+              inherit overlays;
+            };
+            in
             home-manager.lib.homeManagerConfiguration (cfg // {
+              inherit pkgs;
               configuration = { config, lib, pkgs, ... }: {
                 imports = [ cfg.configuration ./hm/. nix-doom-emacs.hmModule ];
                 home.sessionVariables = {
@@ -132,7 +144,6 @@
                   NIXFLAKE = "$HOME/dotfiles/nixos-config";
                 };
                 nixpkgs.overlays = overlays;
-
               };
             }))
           {
@@ -158,7 +169,7 @@
                 imports = [
                   ./hm/arch.nix
                   ./hm/modules/agda.nix
-                  ./hm/modules/emacs.nix
+                  #                  ./hm/modules/emacs.nix
                   ./hm/modules/neovim.nix
                   ./hm/modules/kakoune.nix
                   ./hm/modules/idris2.nix

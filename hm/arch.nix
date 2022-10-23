@@ -1,14 +1,16 @@
 { config, pkgs, system, lib, ... }:
-rec {
+{
+  nixpkgs.config.allowUnfree = true;
   targets.genericLinux.enable = true;
   home.packages = with pkgs; [
+discord
 #    rnix-lsp
-postman
 (polybar.override {
   pulseSupport = true;
   iwSupport  = true;
   githubSupport = true;
 })
+	gnome.gnome-mines
 #google-chrome
 
   ];
