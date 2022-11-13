@@ -30,7 +30,7 @@
     emacs.url = "github:/nix-community/emacs-overlay";
     flake-utils.url = "github:numtide/flake-utils";
     #nixpkgs
-    #    master.url = "github:nixos/nixpkgs/master";
+    master.url = "github:nixos/nixpkgs/master";
     stable.url = "github:nixos/nixpkgs/nixos-21.05";
     unstable.url = "github:nixos/nixpkgs/nixos-unstable";
 
@@ -39,7 +39,7 @@
   };
   outputs =
     inputs@{ self
-      #    , master
+    , master
     , flake-utils
     , nixpkgs
     , home-manager
@@ -78,6 +78,7 @@
               picom = (prev.picom.overrideAttrs (attrs: { src = picom; }));
               #            idris2 = idris2.packages."${system}".idris2;
               #            wezterm = (masterp {inherit system;}).wezterm;
+              discord = (import master { inherit system config; }).discord;
               wezterm = prev.wezterm.overrideAttrs (attrs: {
                 src = inputs.wezterm;
                 cargoDeps = attrs.cargoDeps.overrideAttrs (cattrs: {
@@ -155,7 +156,7 @@
             manjaro = base-home "auscyber" "x86_64-linux";
             nixos = {
               system = "x86_64-linux";
-              homeDirectory = "/home/auscber";
+              homeDirectory = "/home/auscyber";
               username = "auscyber";
               configuration = {
                 imports = [ ./hm/nixos.nix ./hm/agda.nix ./hm/emacs.nix ];

@@ -1,7 +1,7 @@
 { config, pkgs, system, lib, modulesPath, ... }:
 {
   config = {
-  nixpkgs.config.allowUnfree = true;
+    manual.manpages.enable = false;
     programs = {
       command-not-found.enable = true;
       direnv = {

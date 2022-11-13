@@ -779,6 +779,22 @@
         "type": "github"
       }
     },
+    "master": {
+      "locked": {
+        "lastModified": 1666501938,
+        "narHash": "sha256-OgkaIPfVnPupYs87hkjXMeM1t6JD4p1o/K4qlSPwsNs=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "6d3aacb2508b4230b96b3eadb377da426617e4ef",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "master",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "naersk": {
       "inputs": {
         "nixpkgs": [
@@ -1303,6 +1319,7 @@
         "idris2": "idris2",
         "idris2-pkgs": "idris2-pkgs",
         "local-nixpkgs": "local-nixpkgs",
+        "master": "master",
         "neovim": "neovim",
         "nix-doom-emacs": "nix-doom-emacs",
         "nixos-mailserver": "nixos-mailserver",
